@@ -46,6 +46,8 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+export LS_COLORS="${LS_COLORS}:di=36"
+
 alias bat="batcat"
 alias amend="git commit --amend --no-edit"
 alias cm="git commit -m"
