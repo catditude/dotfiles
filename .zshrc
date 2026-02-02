@@ -48,6 +48,18 @@ source $ZSH/oh-my-zsh.sh
 
 export LS_COLORS="${LS_COLORS}:di=36"
 
+print_colors() {
+    for x in {0..8}; do
+        for i in {30..37}; do
+            for a in {40..47}; do
+                echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
+            done
+            echo
+        done
+    done
+    echo ""
+}
+
 alias bat="batcat"
 alias amend="git commit --amend --no-edit"
 alias cm="git commit -m"
