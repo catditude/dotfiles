@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "notify-send 'Claude Code' 'Claude needs your attention'"
+            "command": "printf '\\033Ptmux;\\033\\033]99;;Claude needs your attention\\033\\033\\\\\\033\\\\' > /dev/tty"
           }
         ]
       }
