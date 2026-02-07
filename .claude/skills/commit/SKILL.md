@@ -7,9 +7,9 @@ Create a git commit with Linear issue tracking and push.
 ## Instructions
 
 1. **Check for Linear issue**: If a Linear issue ID was not provided in the user's message (e.g., "RES-81", "ENG-123"):
-   - Fetch in-progress and todo Linear issues assigned to "di" using the `list_issues` MCP tool (assignee: "di", state: "started", limit: 10). Also fetch todo issues (state: "unstarted", limit: 10).
+   - Fetch in-progress and todo Linear issues using the `list_issues` MCP tool (state: "started", limit: 10). Also fetch todo issues (state: "unstarted", limit: 10).
    - Review the current `git diff` changes and match them against the fetched issue titles/descriptions to identify the most relevant issues.
-   - Use AskUserQuestion to ask which Linear issue this commit relates to, populating the options with up to 3 most relevant issues (prioritize in-progress over todo). Use the issue identifier and title as the label (e.g., "RES-81: Add user auth flow"). Always include "None" as a final option for commits that don't relate to any issue.
+   - Use AskUserQuestion to ask which Linear issue this commit relates to, populating the options with up to 2 most relevant issues (prioritize in-progress over todo). Use the issue identifier and title as the label (e.g., "RES-81: Add user auth flow"). Always include "None" as a final option for commits that don't relate to any issue.
 
 2. **Check Claude memory files**: Review if any `.claude/` documentation files (CLAUDE.md, rules/*.md) need updates based on the current code changes:
    - Run `git diff --cached` or `git diff` to see the changes
