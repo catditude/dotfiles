@@ -1,9 +1,18 @@
 # Zsh / Oh My Zsh Reference
 
-## Config File
+## Config Structure
 
-- Location: `~/.zshrc`
-- Oh My Zsh: `~/.oh-my-zsh/`
+Zsh config is modularized. `~/.zshrc` is a minimal loader that sources Oh My Zsh and then auto-loads all `~/.zsh/*.zsh` files.
+
+| File | Purpose |
+|------|---------|
+| `~/.zshrc` | Oh My Zsh setup, plugin list, sources `~/.zsh/*.zsh` |
+| `~/.zsh/aliases.zsh` | All shell aliases (bat, git shortcuts, dot, etc.) |
+| `~/.zsh/exports.zsh` | PATH, env vars (CUDA, bun, neovim, LS_COLORS) |
+| `~/.zsh/functions.zsh` | Shell functions (print_colors, notification hook) |
+| `~/.zsh/completions.zsh` | Completion scripts (bun, etc.) |
+
+To add new config, create a new `.zsh` file in `~/.zsh/` — it gets sourced automatically.
 
 ## Reload Config
 

@@ -34,7 +34,7 @@ Two separate git repositories:
 | Kitty | `~/.config/kitty/kitty.conf` |
 | Kitty theme | `~/.config/kitty/current-theme.conf` |
 | Tmux | `~/.tmux.conf` |
-| Zsh | `~/.zshrc` |
+| Zsh | `~/.zshrc` (loader) + `~/.zsh/*.zsh` (modular configs) |
 | Oh My Zsh | `~/.oh-my-zsh/` |
 
 ## Workflow Guidelines
