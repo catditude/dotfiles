@@ -7,10 +7,16 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(
 	git
 	zsh-autosuggestions
-	zsh-syntax-highlighting
 	fast-syntax-highlighting
-	zsh-autocomplete
+	fzf-tab
 )
+
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 
 source $ZSH/oh-my-zsh.sh
 
