@@ -12,23 +12,23 @@
 	pager = delta
 
 [interactive]
-    diffFilter = delta --color-only
+	diffFilter = delta --color-only
 
 [delta]
-    navigate = true
-    dark = true
-    syntax-theme = base16
-    minus-style = syntax "#3a2a2a"
-    minus-emph-style = syntax "#6b2a2a"
-    plus-style = syntax "#2a3a2a"
-    plus-emph-style = syntax "#2a5a2a"
-    line-numbers = true
-    line-numbers-minus-style = "#ff005f"
-    line-numbers-plus-style = "#9EB294"
-    line-numbers-zero-style = "#878787"
-    hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#dfafff" ul
-    context = 10
+	navigate = true
+	dark = true
+	syntax-theme = base16
+	minus-style = syntax "#3a2a2a"
+	minus-emph-style = syntax "#6b2a2a"
+	plus-style = syntax "#2a3a2a"
+	plus-emph-style = syntax "#2a5a2a"
+	line-numbers = true
+	line-numbers-minus-style = "#ff005f"
+	line-numbers-plus-style = "#9EB294"
+	line-numbers-zero-style = "#878787"
+	hunk-header-style = file line-number syntax
+	hunk-header-decoration-style = "#dfafff" ul
+	context = 10
 
 [merge]
-    conflictStyle = zdiff3
+	conflictStyle = zdiff3
