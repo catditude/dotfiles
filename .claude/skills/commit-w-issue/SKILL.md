@@ -1,11 +1,11 @@
 ---
-name: commit
-description: Create git commits with conventional commit format and push. Use when the user invokes /commit. Stages files, generates commit messages, and pushes to remote.
+name: commit-w-issue
+description: Create git commits with conventional commit format and Linear issue linking. Use when the user wants to commit AND provides a Linear issue ID (e.g., "commit, RES-151", "commit RES-81", "/commit-w-issue RES-42"). This skill requires a Linear issue ID — do not use it for commits without an issue reference.
 ---
 
-# Commit
+# Commit with Linear Issue
 
-Stage, commit, and push changes.
+Stage and commit changes, linking to a provided Linear issue.
 
 ## Workflow
 
@@ -17,10 +17,10 @@ Stage, commit, and push changes.
 2. **Stage and commit**:
    - Stage specific files related to the changes (avoid `git add -A` unless user requests it)
    - Generate commit message using conventional commits format
+   - Add `Closes ISSUE-ID` footer using the provided Linear issue ID
    - Use HEREDOC for commit message to preserve formatting
 
-3. **Push**:
-   - Push to remote after successful commit
+   - Chain `git push` with the commit command (e.g., `git commit ... && git push`)
 
 ## Commit Message Convention
 
@@ -28,13 +28,17 @@ Stage, commit, and push changes.
 <type>: <short description>
 
 <optional body>
+
+Closes <ISSUE-ID>
 ```
 
-**Example:**
+**Example** — `commit, RES-81` produces:
 ```
 feat: add user authentication flow
 
 Implement OAuth2 login with Google and GitHub providers.
+
+Closes RES-81
 ```
 
 ## Edge Cases
