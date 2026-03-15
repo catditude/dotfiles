@@ -7,3 +7,4 @@ alias gem="gemini"
 alias w='cd ~/workspace'
 alias nvconfig='cd ~/.config/nvim'
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias lg='lazygit'
