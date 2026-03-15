@@ -45,6 +45,8 @@ Uses `christoomey/vim-tmux-navigator` style integration. These work without pref
 | `Ctrl-l` | Select pane right (or send to vim) |
 | `Ctrl-\` | Select last pane (or send to vim) |
 
+These also work from copy mode (overrides default copy-mode-vi bindings like `C-h` cursor-left).
+
 ### Vi Copy Mode
 
 `mode-keys` is set to `vi`. Enter copy mode with `prefix + [`.
@@ -64,7 +66,8 @@ Uses `christoomey/vim-tmux-navigator` style integration. These work without pref
 ### Pane Styling
 
 - Heavy border lines with rose pink (`#f591b2`) active border
-- Pane border status bar at top showing: index, command, title (for claude), and current path
+- Pane border status bar at bottom showing: index, command, title (for claude), and current path
+- Window list centered in status bar (`status-justify centre`)
 
 ### Alerts & Notifications
 
