@@ -4,6 +4,7 @@ git:
     - colorArg: always
       pager: delta --dark --paging=never
 gui:
+  wrapLinesInStagingView: true
   theme:
     selectedLineBgColor:
       - "#444444"

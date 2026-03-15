@@ -13,6 +13,11 @@ Stage and commit changes, linking to a provided Linear issue.
    - `git status` — check for changes; if none, inform user and stop
    - `git diff` (staged + unstaged) — review changes for commit message
    - `git log --oneline -5` — match recent commit style
+   - **Only if no issue ID was provided**: fetch related issues via `list_issues` MCP tool (in parallel, any assignee):
+     - `state: "In Progress"`, `limit: 10`
+     - `state: "Todo"`, `limit: 10`
+     - `state: "Backlog"`, `limit: 10`
+   - Match diff against issue titles/descriptions; pick the most relevant issue and add as `Closes` footer
 
 2. **Stage and commit**:
    - Stage specific files related to the changes (avoid `git add -A` unless user requests it)
