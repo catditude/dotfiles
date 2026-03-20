@@ -1,19 +1,11 @@
 ---
 name: dotfiles-manager
 description: Manage dotfiles for zsh, kitty, tmux, and neovim. Use when the user wants to edit configs, sync themes, install fonts, manage plugins, or commit dotfile changes. Handles two-repo setup (nvim separate, others in bare repo).
-compatibility: Requires git, nvim. Designed for Claude Code.
-metadata:
-  author: di
-  version: "1.0"
 ---
 
 # Dotfiles Manager
 
-Helps manage dotfiles across zsh, kitty, tmux, and neovim configurations.
-
 ## Repository Structure
-
-Two separate git repositories:
 
 1. **Neovim config** (regular repo):
    - Location: `~/.config/nvim/`
@@ -25,6 +17,7 @@ Two separate git repositories:
    - Work tree: `$HOME`
    - Remote: `git@github.com:catditude/dotfiles.git`
    - Alias: `dot` (e.g., `dot status`, `dot add`, `dot commit`)
+   - **Important**: Always use `--` separator and full paths: `dot diff -- ~/.tmux.conf`, not `dot diff .tmux.conf`
 
 ## File Locations
 
@@ -37,73 +30,55 @@ Two separate git repositories:
 | Zsh | `~/.zshrc` (loader) + `~/.zsh/*.zsh` (modular configs) |
 | Oh My Zsh | `~/.oh-my-zsh/` |
 
-## Workflow Guidelines
+## Before Making Changes
 
-### Before Making Changes
+1. **Fetch latest docs** using context7 MCP or web search — APIs evolve frequently
+2. **Backup before destructive changes** (e.g., `cp file file.bak`)
 
-1. **Fetch latest documentation** using context7 MCP or web search
-   - Neovim/plugin APIs evolve frequently
-   - Check current syntax for kitty, tmux, zsh options
-
-2. **Backup before destructive changes**
-   ```bash
-   cp ~/.config/kitty/current-theme.conf ~/.config/kitty/current-theme.conf.bak
-   ```
-
-### Making Config Changes
+## Making Config Changes
 
 1. Read the existing config first
 2. Make minimal, focused changes
-3. Explain what each change does
-4. Provide reload instructions:
+3. Provide reload instructions:
    - Kitty: `Ctrl+Shift+F5` or restart
-   - Tmux: `prefix + r` (bound) or `tmux source ~/.tmux.conf`
+   - Tmux: `prefix + r` or `tmux source ~/.tmux.conf`
    - Zsh: `source ~/.zshrc` or new terminal
    - Neovim: `:source %` or restart
 
-### Committing Changes
+## Committing Changes
 
-**Always push after committing.** When the user asks to commit, also push to remote.
+**Always push after committing.**
 
-**For Neovim config:**
+**Neovim config:**
 ```bash
-cd ~/.config/nvim
-git add <files>
-git commit -m "message"
-git push
+cd ~/.config/nvim && git add <files> && git commit -m "message" && git push
 ```
 
-**For other dotfiles (bare repo):**
+**Other dotfiles (bare repo):**
 ```bash
-dot add <files>
-dot commit -m "message"
-dot push
+dot add <files> && dot commit -m "message" && dot push
 ```
 
-## Common Tasks
+## Tmux Plugins
 
-### Theme/Color Management
+Tmux uses TPM (`~/.tmux/plugins/tpm`). Current plugins: catppuccin/tmux (status line only), tmux-resurrect, tmux-continuum.
+
+- Install plugins in tmux: `prefix + I`
+- If tmux is not running, clone plugins directly into `~/.tmux/plugins/`
+- TPM's `bin/install_plugins` script requires a running tmux server — it will fail outside tmux
+
+## Theme/Color Management
+
+- Kitty theme: `~/.config/kitty/current-theme.conf` (background: `#1c1c1c`)
+- Tmux: catppuccin frappe status line; custom pane borders (`#FF6E00`) re-applied after catppuccin loads to prevent override
 - Neovim colorscheme: `~/.config/nvim/colors/*.lua`
-- Kitty theme: `~/.config/kitty/current-theme.conf`
-- When syncing colors, extract values from one config and apply to others
-
-### Font Setup (for icons)
-- Nerd Fonts needed for icons in terminal/neovim
-- Install to `~/.local/share/fonts/`
-- Run `fc-cache -fv` after installing
-- Update kitty.conf `font_family` setting
-
-### Plugin Management
-- Neovim: lazy.nvim, specs in `~/.config/nvim/lua/plugins/`
-- Zsh: Oh My Zsh plugins in `.zshrc` plugins array
-- Tmux: TPM or manual plugin setup
+- When syncing colors across tools, extract values from the source config
 
 ## Reference Files
 
-**Keep references in sync.** When modifying a config, check if the corresponding reference file needs updating (e.g., new key bindings, changed settings). Update the reference before finishing. For example, if you add a `prefix + r` reload binding to `.tmux.conf`, update `references/TMUX.md` to document it.
+**Keep references in sync.** When modifying a config, update the corresponding reference file before finishing.
 
-See `references/` for tool-specific details:
 - [KITTY.md](references/KITTY.md) - Kitty terminal configuration
-- [TMUX.md](references/TMUX.md) - Tmux configuration
+- [TMUX.md](references/TMUX.md) - Tmux configuration and key bindings
 - [ZSH.md](references/ZSH.md) - Zsh and Oh My Zsh setup
 - [NVIM.md](references/NVIM.md) - Neovim configuration patterns

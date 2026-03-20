@@ -53,51 +53,50 @@ These also work from copy mode (overrides default copy-mode-vi bindings like `C-
 
 | Key | Action |
 |-----|--------|
-| `j` / `k` | Scroll line by line |
-| `Ctrl-d` / `Ctrl-u` | Half-page down/up |
-| `Ctrl-f` / `Ctrl-b` | Full-page down/up |
-| `G` / `gg` | Jump to bottom/top |
-| `/` / `?` | Search forward/backward |
 | `v` | Begin selection |
-| `y` | Yank to system clipboard (via xclip) |
-| Mouse drag | Copies to system clipboard on release |
+| `y` | Yank to system clipboard (stays in copy mode) |
+| Mouse drag | Copies to system clipboard (stays in copy mode) |
+| `/` / `?` | Search forward/backward |
 | `q` | Exit copy mode |
+
+Uses `copy-pipe` (not `copy-pipe-and-cancel`) so selections persist after copying.
+
+### Status Line
+
+- **Catppuccin frappe** status line with rounded window tabs
+- Active window highlight: `#ef9f76` (catppuccin peach)
+- Status background: `#1c1c1c` (matches terminal)
+- Left: empty
+- Right: directory + session name modules
 
 ### Pane Styling
 
-- Heavy border lines with rose pink (`#f591b2`) active border
+- Heavy border lines
+- Inactive border: `#444444`
+- Active border: `#FF6E00` (custom, re-applied after catppuccin to prevent override)
 - Pane border status bar at bottom showing: index, command, title (for claude), and current path
-- Window list centered in status bar (`status-justify centre`)
 
-### Alerts & Notifications
+### Plugins (TPM)
 
-- `visual-bell on` — status line message on bell (bell not passed to terminal)
-- `bell-action any` — bells from any window (including current) trigger alerts
-- `window-status-bell-style` — bold highlight for bell windows in status bar
+| Plugin | Purpose |
+|--------|---------|
+| `catppuccin/tmux` | Status line theme (frappe flavor, status line only) |
+| `tmux-plugins/tmux-resurrect` | Save/restore sessions across restarts |
+| `tmux-plugins/tmux-continuum` | Auto-save sessions, auto-restore on tmux start |
+
+Install plugins in tmux: `prefix + I`
 
 ### Other Settings
 
 - Mouse support enabled
 - Windows/panes start at index 1
+- Renumber windows on close
+- Focus events forwarded (for neovim autoread)
 - Escape time: 0 (no delay)
 - History limit: 10000
 - Kitty passthrough enabled (for notifications)
 - Automatic window rename disabled
-
-## Plugin Manager (TPM)
-
-```bash
-# Install TPM
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
-
-Add to `.tmux.conf`:
-```tmux
-set -g @plugin 'tmux-plugins/tpm'
-run '~/.tmux/plugins/tpm/tpm'
-```
-
-Install plugins: `prefix + I`
+- Continuum auto-restore enabled
 
 ## Fetch Latest Docs
 
