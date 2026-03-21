@@ -65,6 +65,7 @@ Uses `copy-pipe` (not `copy-pipe-and-cancel`) so selections persist after copyin
 
 - **Catppuccin frappe** status line with rounded window tabs
 - Active window highlight: `#ef9f76` (catppuccin peach)
+- Bell/notification window: pastel red bg (`#ff9999`), bold black fg, 🔔 icon
 - Status background: `#1c1c1c` (matches terminal)
 - Left: empty
 - Right: directory + session name modules
