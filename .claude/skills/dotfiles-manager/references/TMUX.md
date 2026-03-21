@@ -67,7 +67,7 @@ Uses `copy-pipe` (not `copy-pipe-and-cancel`) so selections persist after copyin
 - Active window highlight: `#ef9f76` (catppuccin peach)
 - Bell/notification window: pastel red bg (`#ff9999`), bold black fg, 🔔 icon
 - Status background: `#1c1c1c` (matches terminal)
-- Left: empty
+- Left: mode indicator with rounded pill style (PREFIX in pink `#f4b8e4`, COPY in green `#a6d189`, hidden in normal mode)
 - Right: directory + session name modules
 
 ### Pane Styling
