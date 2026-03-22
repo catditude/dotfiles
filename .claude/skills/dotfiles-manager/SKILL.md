@@ -16,8 +16,9 @@ description: Manage dotfiles for zsh, kitty, tmux, and neovim. Use when the user
    - Git dir: `~/.dotfiles/`
    - Work tree: `$HOME`
    - Remote: `git@github.com:catditude/dotfiles.git`
-   - Alias: `dot` (e.g., `dot status`, `dot add`, `dot commit`)
-   - **Important**: Always use `--` separator and full paths: `dot diff -- ~/.tmux.conf`, not `dot diff .tmux.conf`
+   - Alias: `dot` (shell only — not available in Bash tool)
+   - In Bash tool, use full form: `git --git-dir=$HOME/.dotfiles --work-tree=$HOME <command> -- <file>`
+   - Always use `--` separator and full paths: `dot diff -- ~/.tmux.conf`, not `dot diff .tmux.conf`
 
 ## File Locations
 
@@ -39,7 +40,17 @@ description: Manage dotfiles for zsh, kitty, tmux, and neovim. Use when the user
 
 1. Read the existing config first
 2. Make minimal, focused changes
-3. Provide reload instructions:
+3. **Never use `sed -i`** on config files — files like `~/.tmux.conf` contain Unicode (powerline symbols) that `sed` silently corrupts, emptying the file. Use Python for replacements:
+   ```python
+   python3 -c "
+   with open('/path/to/file', 'r') as f:
+       content = f.read()
+   content = content.replace('old', 'new')
+   with open('/path/to/file', 'w') as f:
+       f.write(content)
+   "
+   ```
+4. Provide reload instructions:
    - Kitty: `Ctrl+Shift+F5` or restart
    - Tmux: `prefix + r` or `tmux source ~/.tmux.conf`
    - Zsh: `source ~/.zshrc` or new terminal
