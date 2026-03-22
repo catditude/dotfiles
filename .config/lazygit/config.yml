@@ -5,6 +5,7 @@ git:
       pager: delta --dark --paging=never
 promptToReturnFromSubprocess: false
 gui:
+  showNumstatInFilesView: true
   wrapLinesInStagingView: true
   theme:
     selectedLineBgColor:
