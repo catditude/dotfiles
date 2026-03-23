@@ -1,5 +1,43 @@
 {
   "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Task",
+      "WebFetch",
+      "WebSearch",
+      "Bash(cargo build:*)",
+      "Bash(cargo test:*)",
+      "Bash(RUST_LOG=info timeout 60 cargo run:*)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor_cli status)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/pipeline diff --stat)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/pipeline log --oneline -3)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor diff)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor log --oneline -3)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor status:*)",
+      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor diff --stat)",
+      "Bash(cargo fmt:*)",
+      "Bash(cargo clippy:*)",
+      "mcp__plugin_linear_linear__get_issue",
+      "mcp__plugin_linear_linear__list_issue_statuses",
+      "Bash(cargo check:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "mcp__plugin_linear_linear__list_teams",
+      "Bash(rustc:*)",
+      "mcp__plugin_linear_linear__list_issues",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(cargo run:*)"
+    ],
+    "defaultMode": "default",
+    "additionalDirectories": [
+      "/home/di/workspace/ResumeTailorWorkspace/pipeline",
+      "/home/di/workspace/ResumeTailorWorkspace/tailor_app"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
@@ -13,6 +51,8 @@
     "code-review@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
-  }
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
+  },
+  "effortLevel": "high"
 }
