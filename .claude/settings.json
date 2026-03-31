@@ -30,13 +30,11 @@
       "mcp__plugin_linear_linear__list_issues",
       "Bash(wc:*)",
       "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
       "Bash(cargo run:*)"
     ],
-    "defaultMode": "default",
-    "additionalDirectories": [
-      "/home/di/workspace/ResumeTailorWorkspace/pipeline",
-      "/home/di/workspace/ResumeTailorWorkspace/tailor_app"
-    ]
+    "defaultMode": "default"
   },
   "statusLine": {
     "type": "command",
@@ -52,7 +50,8 @@
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true
   },
   "effortLevel": "high"
 }
