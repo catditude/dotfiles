@@ -8,6 +8,9 @@ gui:
   showNumstatInFilesView: true
   wrapLinesInStagingView: true
   theme:
+    activeBorderColor:
+      - "#f075a0"
+      - bold
     selectedLineBgColor:
       - "#444444"
     selectedRangeBgColor:
