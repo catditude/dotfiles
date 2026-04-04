@@ -10,14 +10,6 @@
       "WebSearch",
       "Bash(cargo build:*)",
       "Bash(cargo test:*)",
-      "Bash(RUST_LOG=info timeout 60 cargo run:*)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor_cli status)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/pipeline diff --stat)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/pipeline log --oneline -3)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor diff)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor log --oneline -3)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor status:*)",
-      "Bash(git -C /home/di/workspace/ResumeTailorWorkspace/tailor diff --stat)",
       "Bash(cargo fmt:*)",
       "Bash(cargo clippy:*)",
       "mcp__plugin_linear_linear__get_issue",
@@ -32,10 +24,27 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(cargo run:*)"
+      "Bash(cargo run:*)",
+      "Bash(cargo leptos build:*)",
+      "Bash(dpkg:*)",
+      "Bash(source ~/.cargo/env)",
+      "Bash(tree:*)",
+      "Bash(cargo update:*)",
+      "Bash(git show:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "ask": [
+      "Bash(rm:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(rm -rf ~:*)",
+      "Bash(rm -rf $HOME:*)",
+      "Bash(sudo rm:*)"
     ],
     "defaultMode": "default"
   },
+  "model": "opus[1m]",
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
@@ -53,5 +62,12 @@
     "superpowers@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true
   },
-  "effortLevel": "high"
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["rm *", "rm"]
+  },
+  "effortLevel": "high",
+  "fastMode": true
 }
