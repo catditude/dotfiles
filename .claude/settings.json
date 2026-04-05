@@ -33,14 +33,14 @@
       "Bash(git show:*)",
       "Bash(npx tsc:*)"
     ],
-    "ask": [
-      "Bash(rm:*)"
-    ],
     "deny": [
       "Bash(rm -rf /:*)",
       "Bash(rm -rf ~:*)",
       "Bash(rm -rf $HOME:*)",
       "Bash(sudo rm:*)"
+    ],
+    "ask": [
+      "Bash(rm:*)"
     ],
     "defaultMode": "default"
   },
@@ -62,15 +62,5 @@
     "superpowers@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true
   },
-  "sandbox": {
-    "enabled": true,
-    "failIfUnavailable": true,
-    "autoAllowBashIfSandboxed": true,
-    "excludedCommands": [
-      "rm *",
-      "rm"
-    ]
-  },
-  "effortLevel": "high",
-  "fastMode": true
+  "effortLevel": "high"
 }
