@@ -10,6 +10,15 @@
 - **`copy-pipe` not `copy-pipe-and-cancel`**: Intentional — selections persist in copy mode after yanking so you can re-select or continue scrolling.
 - **Vim-aware pane switching**: Uses `is_vim` shell detection (christoomey/vim-tmux-navigator pattern). The `C-h/j/k/l` binds forward to vim when a vim process is active, otherwise they switch tmux panes. Copy-mode overrides are needed because `C-h` defaults to cursor-left in `copy-mode-vi`.
 - **Pane title display**: `pane-border-format` shows pane title whenever it differs from `#{host_short}` (the default). Titles set via `prefix + T` appear for all panes. Claude Code panes auto-set their own title (current task/status).
+- **Style spec commas break `#{?...}` branches**: Inside a `#{?cond,T,F}` branch, `#[fg=X,bold]` gets split at the comma (the `?` parser tracks `#{}` depth but not `#[]`). Use space-separated style specs inside conditional branches: `#[fg=X bold]`.
+
+## MRU Window Marker
+
+`~/.tmux/mru.sh` maintains a per-session MRU stack so `C-Tab` walks "most recently used" windows. It also publishes the C-Tab destination as a session user option `@mru_next` (window_id). The `window-status-format` conditional renders a lavender `↶` prefix on the matching window so the target is visible in the status bar.
+
+- `cmd_push` sets `@mru_next` to `arr[1]` (the 2nd stack entry — where a fresh C-Tab would land).
+- `cmd_walk` sets `@mru_next` to `arr[0]` (the walk's home window — where a post-timeout C-Tab would land from wherever you end the chain).
+- `set_marker` helper also runs `refresh-client -S` on every client of the session, since option changes don't auto-trigger a status redraw and the push hook runs backgrounded (`-b`).
 
 ## Plugins (TPM)
 

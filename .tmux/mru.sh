@@ -67,6 +67,20 @@ save_state() {
     mv -f "$tmp" "$f"
 }
 
+# Publish the MRU target window_id as a session user option so
+# window-status-format can highlight it. An empty wid clears the marker.
+# Refreshes the status line on every client attached to the session, since
+# option changes don't automatically trigger a redraw.
+set_marker() {
+    local sid=$1 wid=$2
+    tmux set-option -t "$sid" "@mru_next" "$wid" 2>/dev/null || true
+    local cname
+    while IFS= read -r cname; do
+        [[ -n "$cname" ]] || continue
+        tmux refresh-client -S -t "$cname" 2>/dev/null || true
+    done < <(tmux list-clients -t "$sid" -F '#{client_name}' 2>/dev/null)
+}
+
 # Filter stack to only window ids that still exist in the session.
 # Prints space-separated list of live ids.
 live_stack() {
@@ -111,6 +125,15 @@ cmd_push() {
     stack=$(push_front "$wid" "$stack")
     walk_pos=0
     save_state "$sid"
+
+    # Mark the C-Tab target (2nd entry) for visual indicator in status line.
+    local -a arr
+    read -r -a arr <<<"$stack"
+    if (( ${#arr[@]} >= 2 )); then
+        set_marker "$sid" "${arr[1]}"
+    else
+        set_marker "$sid" ""
+    fi
 }
 
 cmd_walk() {
@@ -152,6 +175,11 @@ cmd_walk() {
     save_state "$sid"
 
     tmux select-window -t "$target" 2>/dev/null || true
+
+    # During a walk chain, arr[0] is the window the user was on when the walk
+    # began. That's where the next "natural" C-Tab would land after the walk
+    # timeout expires, so mark it as the MRU target throughout the chain.
+    set_marker "$sid" "${arr[0]}"
 }
 
 main() {
