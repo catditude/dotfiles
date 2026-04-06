@@ -20,6 +20,10 @@
 - `cmd_walk` sets `@mru_next` to `arr[0]` (the walk's home window — where a post-timeout C-Tab would land from wherever you end the chain).
 - `set_marker` helper also runs `refresh-client -S` on every client of the session, since option changes don't auto-trigger a status redraw and the push hook runs backgrounded (`-b`).
 
+## Activity Walker
+
+`~/.tmux/activity-walk.sh` — bound to `C-\`` (via kitty CSI `\e[5;30014~` → `user-keys[2]` → `User2`). Jumps to the window with the oldest pending alert (activity or bell flag), sorted by `window_activity` timestamp ascending. No state file: tmux auto-clears flags on visit, so repeated presses walk the alert queue in chronological order. No-op when no alerts are pending.
+
 ## Plugins (TPM)
 
 Install plugins in tmux: `prefix + I`
