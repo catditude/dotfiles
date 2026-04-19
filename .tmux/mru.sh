@@ -140,13 +140,14 @@ cmd_push() {
 
     stack=$(live_stack "$sid" "$stack")
 
+    local -a arr
+
     # If we're interrupting a walk chain with a real navigation, commit the
     # last walked-to window (arr[walk_pos]) first so it lands as the "previous
     # window" instead of being buried under the original pre-walk top.
     if (( walk_pos > 0 )); then
-        local -a prev_arr
-        read -r -a prev_arr <<<"$stack"
-        local walked_to=${prev_arr[$walk_pos]:-}
+        read -r -a arr <<<"$stack"
+        local walked_to=${arr[$walk_pos]:-}
         if [[ -n "$walked_to" && "$walked_to" != "$wid" ]]; then
             stack=$(push_front "$walked_to" "$stack")
         fi
@@ -157,7 +158,6 @@ cmd_push() {
     save_state "$sid"
 
     # Mark the C-Tab target (2nd entry) for visual indicator in status line.
-    local -a arr
     read -r -a arr <<<"$stack"
     if (( ${#arr[@]} >= 2 )); then
         set_marker "$sid" "${arr[1]}"
@@ -187,7 +187,6 @@ cmd_walk() {
         stack=$(live_stack "$sid" "$stack")
     fi
 
-    # Build array from stack.
     read -r -a arr <<<"$stack"
     local n=${#arr[@]}
     if (( n < 2 )); then
