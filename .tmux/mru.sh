@@ -139,6 +139,19 @@ cmd_push() {
     fi
 
     stack=$(live_stack "$sid" "$stack")
+
+    # If we're interrupting a walk chain with a real navigation, commit the
+    # last walked-to window (arr[walk_pos]) first so it lands as the "previous
+    # window" instead of being buried under the original pre-walk top.
+    if (( walk_pos > 0 )); then
+        local -a prev_arr
+        read -r -a prev_arr <<<"$stack"
+        local walked_to=${prev_arr[$walk_pos]:-}
+        if [[ -n "$walked_to" && "$walked_to" != "$wid" ]]; then
+            stack=$(push_front "$walked_to" "$stack")
+        fi
+    fi
+
     stack=$(push_front "$wid" "$stack")
     walk_pos=0
     save_state "$sid"

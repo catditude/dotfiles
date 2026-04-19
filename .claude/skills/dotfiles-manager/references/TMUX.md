@@ -19,6 +19,8 @@
 - `cmd_push` sets `@mru_next` to `arr[1]` (the 2nd stack entry — where a fresh C-Tab would land).
 - `cmd_walk` sets `@mru_next` to `arr[0]` (the walk's home window — where a post-timeout C-Tab would land from wherever you end the chain).
 - `set_marker` helper also runs `refresh-client -S` on every client of the session, since option changes don't auto-trigger a status redraw and the push hook runs backgrounded (`-b`).
+- `walk_pending` dedupe: `cmd_walk` queues its target wid before `select-window`; `cmd_push` skips a push iff the wid is in `walk_pending` (and removes it). Replaces the earlier time-based grace window, which over-eagerly swallowed a real user `C-n`/`C-p` that followed quickly after `C-Tab`.
+- Walk-interrupt commit: walks deliberately don't reorder the stack (so repeated `C-Tab` can walk deeper instead of ping-ponging). But if the user does a real navigation mid-walk, `cmd_push` first prepends the last walked-to window (`arr[walk_pos]`) so it lands as the "previous window" — otherwise the walked-to window gets buried under the pre-walk top and `arr[1]` shows the wrong window.
 
 ## Activity Walker
 
