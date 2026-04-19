@@ -23,7 +23,7 @@
 
 set -euo pipefail
 
-WALK_TIMEOUT_MS=1000
+WALK_TIMEOUT_MS=500
 WALK_GRACE_MS=300
 
 state_dir() {
