@@ -3,9 +3,10 @@
 #
 # Subcommands:
 #   push <session_id> <window_id>   Record a visit. Called from tmux hooks.
-#                                    No-op if a walk is in progress (last walk
-#                                    was within WALK_GRACE_MS ago), so stepping
-#                                    through the stack doesn't corrupt it.
+#                                    No-op if <window_id> matches an entry in
+#                                    walk_pending — i.e., this push was
+#                                    triggered by the walk's own select-window,
+#                                    not a real user navigation.
 #   walk <session_id>                Step one position deeper in MRU. If the
 #                                    previous walk was idle for longer than
 #                                    WALK_TIMEOUT_MS, the current window is
@@ -16,6 +17,7 @@
 #   walk_ts=<millis>
 #   walk_pos=<int>
 #   stack="@id @id @id"
+#   walk_pending="@id @id"   # wids whose push hook the walk is awaiting
 #
 # Walk semantics: tap C-Tab once → jump to 2nd entry in stack; tap again within
 # WALK_TIMEOUT_MS → 3rd entry; etc. Wraps at end. After timeout, whichever
@@ -24,7 +26,6 @@
 set -euo pipefail
 
 WALK_TIMEOUT_MS=500
-WALK_GRACE_MS=300
 
 state_dir() {
     local base="${XDG_RUNTIME_DIR:-/tmp}/tmux-mru-${USER:-$(id -un)}"
@@ -43,11 +44,12 @@ now_ms() {
     date +%s%3N
 }
 
-# Read state file into globals: walk_ts, walk_pos, stack.
+# Read state file into globals: walk_ts, walk_pos, stack, walk_pending.
 load_state() {
     walk_ts=0
     walk_pos=0
     stack=""
+    walk_pending=""
     local f
     f=$(state_file "$1")
     [[ -r "$f" ]] && . "$f" || true
@@ -63,6 +65,7 @@ save_state() {
         printf 'walk_pos=%s\n' "$walk_pos"
         # Quote stack since it contains spaces; @ is safe in shell double-quotes.
         printf 'stack="%s"\n' "$stack"
+        printf 'walk_pending="%s"\n' "$walk_pending"
     } >"$tmp"
     mv -f "$tmp" "$f"
 }
@@ -98,6 +101,19 @@ live_stack() {
     printf '%s' "$out"
 }
 
+# Remove first occurrence of $1 from space-separated list $2. Prints result.
+remove_first() {
+    local target=$1 list=$2 out="" id found=0
+    for id in $list; do
+        if (( found == 0 )) && [[ "$id" == "$target" ]]; then
+            found=1
+            continue
+        fi
+        out="${out:+$out }$id"
+    done
+    printf '%s' "$out"
+}
+
 # Prepend wid to stack, removing any prior occurrence.
 push_front() {
     local wid=$1 cur=$2
@@ -113,11 +129,12 @@ cmd_push() {
     local sid=$1 wid=$2
     load_state "$sid"
 
-    # If we're mid-walk (recent walk_ts), ignore this hook-driven push —
-    # otherwise every walk step would reorder the stack under us.
-    local now
-    now=$(now_ms)
-    if (( now - walk_ts < WALK_GRACE_MS )); then
+    # If this push was triggered by the walk's own select-window, consume the
+    # expected entry and skip — otherwise the walk would reorder its own stack.
+    # Any other wid is a real user navigation and should update MRU.
+    if [[ " $walk_pending " == *" $wid "* ]]; then
+        walk_pending=$(remove_first "$wid" "$walk_pending")
+        save_state "$sid"
         return 0
     fi
 
@@ -144,12 +161,15 @@ cmd_walk() {
     now=$(now_ms)
 
     # Timeout expired → commit current window as new top, fresh walk.
+    # Clear walk_pending too: any unmatched entries are stale (hooks that never
+    # fired), and we don't want them silently eating a future real push.
     if (( now - walk_ts > WALK_TIMEOUT_MS )); then
         local cur
         cur=$(tmux display-message -t "$sid" -p '#{window_id}')
         stack=$(live_stack "$sid" "$stack")
         stack=$(push_front "$cur" "$stack")
         walk_pos=0
+        walk_pending=""
     else
         stack=$(live_stack "$sid" "$stack")
     fi
@@ -169,8 +189,9 @@ cmd_walk() {
 
     local target=${arr[$walk_pos]}
 
-    # Write fresh walk_ts BEFORE select-window so the hook-triggered push
-    # sees us as mid-walk and skips itself.
+    # Queue the expected push hook for this target so cmd_push can dedupe it.
+    # Must be saved BEFORE select-window fires the hook.
+    walk_pending="${walk_pending:+$walk_pending }$target"
     walk_ts=$now
     save_state "$sid"
 
