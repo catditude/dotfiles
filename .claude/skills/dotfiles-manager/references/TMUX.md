@@ -22,6 +22,24 @@
 - `walk_pending` dedupe: `cmd_walk` queues its target wid before `select-window`; `cmd_push` skips a push iff the wid is in `walk_pending` (and removes it). Replaces the earlier time-based grace window, which over-eagerly swallowed a real user `C-n`/`C-p` that followed quickly after `C-Tab`.
 - Walk-interrupt commit: walks deliberately don't reorder the stack (so repeated `C-Tab` can walk deeper instead of ping-ponging). But if the user does a real navigation mid-walk, `cmd_push` first prepends the last walked-to window (`arr[walk_pos]`) so it lands as the "previous window" — otherwise the walked-to window gets buried under the pre-walk top and `arr[1]` shows the wrong window.
 
+## Exit Copy Mode on Type
+
+`~/.tmux/exit-copy-on-type.sh` — loops over alphanumerics and binds each in
+`copy-mode-vi` to `send-keys -X cancel ; send-keys <char>`. Invoked via
+`run-shell` so typing any letter/digit while in copy mode (e.g. after scroll
+or selection) exits and passes the keystroke through to the pane.
+
+- Excluded: `v` (begin-selection), `y` (yank), `q` (cancel) — preserves the
+  selection/copy/cancel workflow.
+- Mouse selection (`MouseDragEnd1Pane` → `copy-pipe`) is untouched and still
+  copies to the X clipboard via `xclip`.
+- Shell escaping gotcha: `\;` in shell becomes `;` and terminates the
+  `bind-key` invocation, so the compound command must be passed as a single
+  quoted string (`"send-keys -X cancel ; send-keys $c"`) — tmux then parses
+  the internal `;` as a command separator within the binding.
+- Tradeoff: vi-style keyboard navigation in copy mode (`hjkl`, `w`, `b`, …)
+  now exits instead of navigating. Mouse remains the primary nav/selection.
+
 ## Activity Walker
 
 `~/.tmux/activity-walk.sh` — bound to `C-\`` (via kitty CSI `\e[5;30014~` → `user-keys[2]` → `User2`). Jumps to the window with the oldest pending alert (activity or bell flag), sorted by `window_activity` timestamp ascending. No state file: tmux auto-clears flags on visit, so repeated presses walk the alert queue in chronological order. No-op when no alerts are pending.
