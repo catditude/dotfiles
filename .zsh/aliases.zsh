@@ -1,10 +1,10 @@
-alias bat="batcat"
+command -v bat &>/dev/null || alias bat="batcat"
 alias amend="git commit --amend --no-edit"
 alias cm="git commit -m"
 alias p="git push"
+alias unstage='git reset --mixed HEAD~1'
 alias c="claude"
-alias gem="gemini"
-alias w='cd ~/workspace'
+alias k='kiro-cli'
+alias w='cd ~/workplace'
 alias nvconfig='cd ~/.config/nvim'
-alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias lg='lazygit'

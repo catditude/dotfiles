@@ -1,0 +1,17 @@
+# Machine-specific git config. Copy to ~/.gitconfig.local (not tracked).
+
+[user]
+	name = Your Name
+	email = your@email.com
+
+# GitHub credential helper:
+# [credential "https://github.com"]
+# 	helper =
+# 	helper = !/usr/bin/gh auth git-credential
+
+# Git LFS:
+# [filter "lfs"]
+# 	clean = git-lfs clean -- %f
+# 	smudge = git-lfs smudge -- %f
+# 	process = git-lfs filter-process
+# 	required = true

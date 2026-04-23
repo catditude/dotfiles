@@ -1,16 +1,10 @@
-[user]
-	name = Di
-	email = dihuynh2302@gmail.com
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+[include]
+	path = ~/.gitconfig.local
+
 [core]
 	editor = nvim
 	pager = delta
-	excludesFile = /home/di/.gitignore_global
+	excludesFile = ~/.gitignore_global
 
 [interactive]
 	diffFilter = delta --color-only
@@ -33,3 +27,9 @@
 
 [merge]
 	conflictStyle = zdiff3
+
+[push]
+	default = simple
+
+[alias]
+	dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)%an <%ae>%C(reset) %C(magenta)%cr%C(reset)%C(auto)%d%C(reset)%n%s' --date-order

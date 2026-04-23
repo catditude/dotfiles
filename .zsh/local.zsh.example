@@ -1,0 +1,35 @@
+# Machine-specific shell config. Copy to ~/.zsh/local.zsh (not tracked).
+# This file is auto-sourced by .zshrc via the ~/.zsh/*.zsh glob.
+
+# --- Amazon / Brazil ---
+# export BRAZIL_WORKSPACE_DEFAULT_LAYOUT=short
+# export AUTO_TITLE_SCREENS="NO"
+# export AWS_EC2_METADATA_DISABLED=true
+# export PATH="$HOME/.toolbox/bin:$PATH"
+# [ -f ~/.brazil_completion/zsh_completion ] && source ~/.brazil_completion/zsh_completion
+#
+# alias init='mwinit -f -s'
+# alias bb=brazil-build
+# alias bba='brazil-build apollo-pkg'
+# alias bre='brazil-runtime-exec'
+# alias brc='brazil-recursive-cmd'
+# alias bws='brazil ws'
+# alias bwsuse='bws use -p'
+# alias bwscreate='bws create -n'
+# alias bbr='brazil-build release'
+# alias bbf='brazil-build format'
+# alias bball='brc --allPackages'
+# alias bbb='brc --allPackages brazil-build'
+# alias bbra='bbr apollo-pkg'
+# alias bwsync='brazil ws --sync --md'
+
+# --- mise ---
+# eval "$(~/.local/bin/mise activate zsh)"
+
+# --- nvm (lazy-load) ---
+# export NVM_DIR="$HOME/.nvm"
+# [ -d "$NVM_DIR/versions/node" ] && PATH="$(ls -d "$NVM_DIR"/versions/node/*/bin 2>/dev/null | tail -1):$PATH"
+# _load_nvm() { unset -f nvm npm npx; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; }
+# nvm() { _load_nvm; nvm "$@"; }
+# npm() { _load_nvm; npm "$@"; }
+# npx() { _load_nvm; npx "$@"; }
