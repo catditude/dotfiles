@@ -61,5 +61,11 @@
     "superpowers@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true
   },
-  "skipAutoPermissionPrompt": true
+  "tui": "fullscreen",
+  "verbose": true,
+  "preferredNotifChannel": "terminal_bell",
+  "showTurnDuration": false,
+  "terminalProgressBarEnabled": false,
+  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true
 }
