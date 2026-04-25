@@ -11,6 +11,7 @@ Zsh config is modularized. `~/.zshrc` is a minimal loader that sources Oh My Zsh
 | `~/.zsh/exports.zsh` | PATH, env vars (CUDA, bun, neovim, LS_COLORS) |
 | `~/.zsh/functions.zsh` | Shell functions (print_colors, notification hook) |
 | `~/.zsh/completions.zsh` | Completion scripts (bun, etc.) |
+| `~/.zsh/tmux-ssh.zsh` | Auto-attach/create tmux session "0" on SSH login (exec's tmux) |
 
 To add new config, create a new `.zsh` file in `~/.zsh/` — it gets sourced automatically.
 
