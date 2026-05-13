@@ -10,3 +10,17 @@ print_colors() {
     echo ""
 }
 
+# Wrap claude so Ctrl-C / exit clears the tmux pane badge left by hooks.
+claude() {
+    local badge_hook="$HOME/.claude/hooks/tmux-pane-badge.sh"
+    if [[ -n "$TMUX_PANE" && -x "$badge_hook" ]]; then
+        trap "'$badge_hook' '' 2>/dev/null" EXIT INT
+        command claude "$@"
+        local rc=$?
+        "$badge_hook" '' 2>/dev/null
+        trap - EXIT INT
+        return $rc
+    fi
+    command claude "$@"
+}
+
