@@ -44,6 +44,48 @@
     ],
     "defaultMode": "auto"
   },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/tmux-pane-badge.sh '🔔 needs input'",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/tmux-pane-badge.sh '✓ done'",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/tmux-pane-badge.sh ''",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "$HOME/.claude/hooks/tmux-pane-badge.sh --clear-needs-input",
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
