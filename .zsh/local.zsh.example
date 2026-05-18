@@ -1,6 +1,9 @@
 # Machine-specific shell config. Copy to ~/.zsh/local.zsh (not tracked).
 # This file is auto-sourced by .zshrc via the ~/.zsh/*.zsh glob.
 
+# --- Dotfiles bare repo (recommended on every machine) ---
+# alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
 # --- Amazon / Brazil ---
 # export BRAZIL_WORKSPACE_DEFAULT_LAYOUT=short
 # export AUTO_TITLE_SCREENS="NO"
