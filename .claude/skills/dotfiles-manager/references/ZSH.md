@@ -7,11 +7,12 @@ Zsh config is modularized. `~/.zshrc` is a minimal loader that sources Oh My Zsh
 | File | Purpose |
 |------|---------|
 | `~/.zshrc` | Oh My Zsh setup, plugin list, sources `~/.zsh/*.zsh` |
-| `~/.zsh/aliases.zsh` | All shell aliases (bat, git shortcuts, dot, etc.) |
+| `~/.zsh/aliases.zsh` | All shell aliases (bat, git shortcuts, etc.) |
 | `~/.zsh/exports.zsh` | PATH, env vars (CUDA, bun, neovim, LS_COLORS) |
 | `~/.zsh/functions.zsh` | Shell functions (print_colors, notification hook) |
 | `~/.zsh/completions.zsh` | Completion scripts (bun, etc.) |
 | `~/.zsh/tmux-ssh.zsh` | Auto-attach/create tmux session "0" on SSH login (exec's tmux) |
+| `~/.zsh/local.zsh` | Machine-local config — untracked, gitignored (cargo env, `dot` alias) |
 
 To add new config, create a new `.zsh` file in `~/.zsh/` — it gets sourced automatically.
 

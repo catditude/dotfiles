@@ -18,7 +18,18 @@ description: Manage dotfiles for zsh, kitty, tmux, and neovim. Use when the user
    - Remote: `git@github.com:catditude/dotfiles.git`
    - Alias: `dot` (shell only — not available in Bash tool)
    - In Bash tool, use full form: `git --git-dir=$HOME/.dotfiles --work-tree=$HOME <command> -- <file>`
-   - Always use `--` separator and full paths: `dot diff -- ~/.tmux.conf`, not `dot diff .tmux.conf`
+   - Always use `--` separator and absolute/`~` paths: `dot diff -- ~/.tmux.conf`, not `dot diff .tmux.conf`. A relative pathspec resolves against cwd (not `$HOME`), so it silently matches nothing — empty output, no error.
+
+## Machine-Local Config (untracked)
+
+Per-machine values live in untracked files (listed in `.gitignore`), with tracked `*.example` templates. Put machine-specific settings here — never in tracked configs.
+
+| Untracked file | Loaded by | Holds |
+|----------------|-----------|-------|
+| `~/.gitconfig.local` | `.gitconfig` `[include]` | git identity (`user.name`/`email`), `gh` credential helpers |
+| `~/.zsh/local.zsh` | `.zshrc` `~/.zsh/*.zsh` glob | machine-local shell config, aliases (e.g. `dot`), PATH |
+
+`.tmux/plugins/` is also gitignored (TPM installs per-machine). New-machine setup: copy each `*.example` to its real path and fill in.
 
 ## File Locations
 
