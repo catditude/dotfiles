@@ -3,6 +3,7 @@ export LS_COLORS="${LS_COLORS}:di=36:ow=01;34;100"
 
 # Local binaries
 export PATH="$HOME/.local/bin:$PATH"
+[[ -d "$HOME/bin" ]] && export PATH="$HOME/bin:$PATH"
 
 # Neovim (x86_64 system install)
 [[ "$(uname -m)" == "x86_64" ]] && export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
