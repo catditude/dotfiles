@@ -9,5 +9,8 @@ elif [ -z "$1" ]; then
   tmux set-option -pu -t "$TMUX_PANE" @badge 2>/dev/null || true
 else
   tmux set-option -p -t "$TMUX_PANE" @badge "$1" 2>/dev/null || true
-  printf '\a' > /dev/tty 2>/dev/null || true
+  pane_tty=$(tmux display-message -p -t "$TMUX_PANE" '#{pane_tty}' 2>/dev/null)
+  if [ -n "$pane_tty" ] && [ -w "$pane_tty" ]; then
+    printf '\a' > "$pane_tty" 2>/dev/null || true
+  fi
 fi
