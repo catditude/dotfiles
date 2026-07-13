@@ -49,3 +49,23 @@ Per-pane status indicators for concurrent Claude agents across tmux panes.
 - `.claude/hooks/tmux-pane-badge.sh` — sets/clears `@badge` and rings the bell
 - `.tmux.conf` — `pane-border-format` reads `@badge`
 - `.zsh/functions.zsh` — `claude()` wrapper for exit cleanup
+
+## Claude Code custom theme
+
+`.claude/themes/readable.json` — custom color theme (slug `readable`, selected as `custom:readable`). Fixes the near-invisible gray-on-gray dimmed text and tints body text pink.
+
+- `subtle: #c0c0c0` — the dimmed/queued-prompt text; the stock value is too dark to read against the message box (this is the token, **not** `inactive`/`text`).
+- `text: #FFC0CB` — main body foreground, pink.
+
+**Apply on a machine** (`.claude/` here is a standalone copy, **not** symlinked into `~/.claude` — you must copy + point the setting):
+
+```sh
+cp .claude/themes/readable.json ~/.claude/themes/readable.json
+# then set  "theme": "custom:readable"  in ~/.claude/settings.json
+```
+
+**Gotchas** (ASBX Bedrock build, v2.1.205):
+- Theme edits do **not** hot-reload despite the docs — fully restart Claude Code to see changes.
+- The `/theme` command overwrites `settings.json` back to a built-in, clobbering `custom:readable`. Edit the JSON directly.
+- The code-diff green/red backgrounds (`diffAdded`/`diffRemoved`) are **not** honored in this build — hardcoded, not themeable. Re-test after a `toolbox update claude-code`.
+- Token reference: https://code.claude.com/docs/en/terminal-config

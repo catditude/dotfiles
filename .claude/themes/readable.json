@@ -1,0 +1,8 @@
+{
+  "name": "Dark (readable dim)",
+  "base": "dark",
+  "overrides": {
+    "subtle": "#c0c0c0",
+    "text": "#FFC0CB"
+  }
+}
