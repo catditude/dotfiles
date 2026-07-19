@@ -10,6 +10,7 @@
 - **`copy-pipe` not `copy-pipe-and-cancel`**: Intentional — selections persist in copy mode after yanking so you can re-select or continue scrolling.
 - **Vim-aware pane switching**: Uses `is_vim` shell detection (christoomey/vim-tmux-navigator pattern). The `C-h/j/k/l` binds forward to vim when a vim process is active, otherwise they switch tmux panes. Copy-mode overrides are needed because `C-h` defaults to cursor-left in `copy-mode-vi`.
 - **Pane title display**: `pane-border-format` shows pane title whenever it differs from `#{host_short}` (the default). Titles set via `prefix + T` appear for all panes. Claude Code panes auto-set their own title (current task/status).
+- **Inactive-pane dimming**: `window-style` / `window-active-style` set the pane's default fg/bg (inactive panes use `#171717` bg, active `#1c1c1c`). They're *window* options — verify with `tmux show -gw`, not `show -g`. Apps that paint their own background (nvim, less with a theme) override the dim; it mainly shows on shell panes.
 - **Style spec commas break `#{?...}` branches**: Inside a `#{?cond,T,F}` branch, `#[fg=X,bold]` gets split at the comma (the `?` parser tracks `#{}` depth but not `#[]`). Use space-separated style specs inside conditional branches: `#[fg=X bold]`.
 
 ## MRU Window Marker
