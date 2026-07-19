@@ -106,6 +106,7 @@
     "ralph-loop@claude-plugins-official": false
   },
   "effortLevel": "xhigh",
+  "theme": "custom:readable",
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
   "verbose": false,
