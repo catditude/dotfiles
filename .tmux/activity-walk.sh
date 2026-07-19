@@ -23,4 +23,19 @@ target=$(tmux list-windows -t "$sid" \
     | head -1 \
     | awk '{ print $2 }')
 
-[[ -n "$target" ]] && tmux select-window -t "$target" 2>/dev/null || true
+[[ -z "$target" ]] && exit 0
+
+tmux select-window -t "$target" 2>/dev/null || true
+
+# Land on the pane that raised the alert, not just the window. tmux has no
+# per-pane bell flag (#{window_bell_flag} is window-scoped, and the alert-bell
+# hook reports the window's *active* pane, not the ringing one), so key off the
+# @badge pane option that ~/.claude/hooks/tmux-pane-badge.sh sets — that hook is
+# also what writes the \a raising the bell, so the badge is the alert's origin.
+# Prefer a pane blocked on input over a finished one; list-panes emits in index
+# order, so head -1 breaks ties by lowest pane index. Unbadged bell (build
+# script, etc.) leaves pane selection alone.
+pane=$(tmux list-panes -t "$target" -F '#{pane_id}' -f '#{m:🔔*,#{@badge}}' 2>/dev/null | head -1 || true)
+[[ -z "$pane" ]] && pane=$(tmux list-panes -t "$target" -F '#{pane_id}' -f '#{m:✓*,#{@badge}}' 2>/dev/null | head -1 || true)
+
+[[ -n "$pane" ]] && tmux select-pane -t "$pane" 2>/dev/null || true

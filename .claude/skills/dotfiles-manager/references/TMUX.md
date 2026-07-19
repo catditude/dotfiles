@@ -23,6 +23,14 @@
 - `walk_pending` dedupe: `cmd_walk` queues its target wid before `select-window`; `cmd_push` skips a push iff the wid is in `walk_pending` (and removes it). Replaces the earlier time-based grace window, which over-eagerly swallowed a real user `C-n`/`C-p` that followed quickly after `C-Tab`.
 - Walk-interrupt commit: walks deliberately don't reorder the stack (so repeated `C-Tab` can walk deeper instead of ping-ponging). But if the user does a real navigation mid-walk, `cmd_push` first prepends the last walked-to window (`arr[walk_pos]`) so it lands as the "previous window" — otherwise the walked-to window gets buried under the pre-walk top and `arr[1]` shows the wrong window.
 
+## Alert Pane Landing
+
+`C-\`` (`~/.tmux/activity-walk.sh`) selects both the alerted window *and* the pane that raised the alert.
+
+- **tmux has no per-pane alert flag.** `window_bell_flag` / `window_activity_flag` are window-scoped, and the `alert-bell` hook's `#{pane_id}` resolves to the window's *active* pane, not the ringing one — verified, so that workaround doesn't work.
+- **The badge is the origin record.** `~/.claude/hooks/tmux-pane-badge.sh` sets the pane-scoped `@badge` option *and* writes the `\a` that raises the bell, so every bell traces back to a badged pane. The walker filters on it: `list-panes -f '#{m:🔔*,#{@badge}}'`, falling back to `✓*`, then leaving the pane alone if nothing is badged.
+- **`monitor-activity` is `off`**, so `window_activity_flag` never fires — bells are the only live alert source despite the walker still checking both.
+
 ## Exit Copy Mode on Type
 
 `~/.tmux/exit-copy-on-type.sh` — loops over alphanumerics and binds each in
