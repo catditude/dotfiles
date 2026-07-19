@@ -40,5 +40,11 @@ read -r win pane <<<"$(newest '🔔*')"
 [[ -z "${pane:-}" ]] && read -r win pane <<<"$(newest '✓*')"
 [[ -z "${pane:-}" ]] && exit 0
 
-tmux select-window -t "$win" 2>/dev/null || true
+# Point the window at the target pane BEFORE switching to it. Reversed, the
+# select-window focuses whatever pane was last active there, and the
+# pane-focus-in hook clears *that* pane's badge in passing — silently dropping a
+# pending notification the walker never meant to visit. select-pane on a
+# non-current window only sets its active pane; no focus event fires until the
+# select-window below, which then lands on the pane we actually want.
 tmux select-pane -t "$pane" 2>/dev/null || true
+tmux select-window -t "$win" 2>/dev/null || true
