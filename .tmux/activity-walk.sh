@@ -1,41 +1,44 @@
 #!/usr/bin/env bash
-# tmux activity walker.
+# tmux notification walker.
 #
-# Jump to the window in the given session with the oldest pending alert
-# (activity or bell flag), so repeated taps clear the alert queue in
-# chronological order. Sorts by #{window_activity} ascending — *not* by
-# window index — which is the key difference from `next-window -a`.
+# Jump to the pane holding the most recent pending Claude Code notification,
+# crossing window boundaries. Panes needing input outrank finished ones; within
+# each class the newest notification wins.
 #
-# Called from a C-` bind (see ~/.tmux.conf). No state file: tmux's own
-# activity_flag is cleared on visit, so the "next" press naturally finds
-# the next-oldest alerted window.
+# tmux has no per-pane alert flag — #{window_bell_flag} is window-scoped, and
+# the alert-bell hook reports the window's *active* pane rather than the ringing
+# one (verified). So the queue is the @badge / @badge_at pane options set by
+# ~/.claude/hooks/tmux-pane-badge.sh, which is also what writes the \a raising
+# the bell: every notification traces back to a badged pane.
+#
+# Focusing a pane clears its badge (pane-focus-in hook in ~/.tmux.conf), so
+# repeated taps drain the queue newest-first.
+#
+# Called from a C-` bind (see ~/.tmux.conf).
 
-set -euo pipefail
+# No `-e`: the lookups below legitimately come back empty, and `read` returning
+# nonzero on empty input would abort the fallback chain.
+set -uo pipefail
 
 sid=${1:-}
 [[ -z "$sid" ]] && exit 0
 
-target=$(tmux list-windows -t "$sid" \
-    -F '#{window_activity} #{window_id} #{window_activity_flag} #{window_bell_flag}' \
-    2>/dev/null \
-    | awk '$3 == "1" || $4 == "1" { print $1, $2 }' \
-    | sort -n \
-    | head -1 \
-    | awk '{ print $2 }')
+# Newest badged pane whose @badge matches glob $1, printed as "window_id pane_id".
+# A pane badged before @badge_at existed sorts oldest via a zero sentinel. The
+# timestamp stays a string end to end — 19-digit nanoseconds exceed the precision
+# of both sort -n and awk arithmetic, so compare them lexically at fixed width.
+newest() {
+    tmux list-panes -s -t "$sid" -F '#{@badge_at}|#{window_id}|#{pane_id}' \
+        -f "#{m:$1,#{@badge}}" 2>/dev/null \
+        | awk -F'|' '{ print ($1 == "" ? "0000000000000000000" : $1), $2, $3 }' \
+        | sort -r \
+        | head -1 \
+        | awk '{ print $2, $3 }'
+}
 
-[[ -z "$target" ]] && exit 0
+read -r win pane <<<"$(newest '🔔*')"
+[[ -z "${pane:-}" ]] && read -r win pane <<<"$(newest '✓*')"
+[[ -z "${pane:-}" ]] && exit 0
 
-tmux select-window -t "$target" 2>/dev/null || true
-
-# Land on the pane that raised the alert, not just the window. tmux has no
-# per-pane bell flag (#{window_bell_flag} is window-scoped, and the alert-bell
-# hook reports the window's *active* pane, not the ringing one), so key off the
-# @badge pane option that ~/.claude/hooks/tmux-pane-badge.sh sets — that hook is
-# also what writes the \a raising the bell, so the badge is the alert's origin.
-# Prefer a pane blocked on input over a finished one; list-panes emits in index
-# order, so head -1 breaks ties by lowest pane index. Unbadged bell (build
-# script, etc.) leaves pane selection alone.
-pane=$(tmux list-panes -t "$target" -F '#{pane_id}' -f '#{m:🔔*,#{@badge}}' 2>/dev/null | head -1 || true)
-[[ -z "$pane" ]] && pane=$(tmux list-panes -t "$target" -F '#{pane_id}' -f '#{m:✓*,#{@badge}}' 2>/dev/null | head -1 || true)
-
-[[ -n "$pane" ]] && tmux select-pane -t "$pane" 2>/dev/null || true
+tmux select-window -t "$win" 2>/dev/null || true
+tmux select-pane -t "$pane" 2>/dev/null || true

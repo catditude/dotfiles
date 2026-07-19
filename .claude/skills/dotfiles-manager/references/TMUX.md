@@ -11,6 +11,8 @@
 - **Vim-aware pane switching**: Uses `is_vim` shell detection (christoomey/vim-tmux-navigator pattern). The `C-h/j/k/l` binds forward to vim when a vim process is active, otherwise they switch tmux panes. Copy-mode overrides are needed because `C-h` defaults to cursor-left in `copy-mode-vi`.
 - **Pane title display**: `pane-border-format` shows pane title whenever it differs from `#{host_short}` (the default). Titles set via `prefix + T` appear for all panes. Claude Code panes auto-set their own title (current task/status).
 - **Inactive-pane dimming**: `window-style` / `window-active-style` set the pane's default fg/bg (inactive panes use `#171717` bg, active `#1c1c1c`). They're *window* options — verify with `tmux show -gw`, not `show -g`. Apps that paint their own background (nvim, less with a theme) override the dim; it mainly shows on shell panes.
+- **`#F` in a format eats hex colors starting with F**: `#FF83A4` inside a format expands as `#F` (window_flags) + `F83A4`, yielding garbage like `*F83A4`. Escape the hash as `##FF83A4`. Only bites inside format expansion — `#[fg=#FF83A4]` within `pane-border-format` is safe, since `#[...]` contents aren't format-expanded. Bare style options (`mode-style`) are unaffected too; it's specifically styles that contain `#{...}` and so get expanded.
+- **Style options accept formats**: `pane-border-style` etc. take `#{?...}` conditionals, which is how badged panes get their own border color. tmux validates styles at set-time (`fg=#zzzzzz` is rejected) but accepts format strings, deferring expansion.
 - **Style spec commas break `#{?...}` branches**: Inside a `#{?cond,T,F}` branch, `#[fg=X,bold]` gets split at the comma (the `?` parser tracks `#{}` depth but not `#[]`). Use space-separated style specs inside conditional branches: `#[fg=X bold]`.
 
 ## MRU Window Marker
@@ -23,13 +25,17 @@
 - `walk_pending` dedupe: `cmd_walk` queues its target wid before `select-window`; `cmd_push` skips a push iff the wid is in `walk_pending` (and removes it). Replaces the earlier time-based grace window, which over-eagerly swallowed a real user `C-n`/`C-p` that followed quickly after `C-Tab`.
 - Walk-interrupt commit: walks deliberately don't reorder the stack (so repeated `C-Tab` can walk deeper instead of ping-ponging). But if the user does a real navigation mid-walk, `cmd_push` first prepends the last walked-to window (`arr[walk_pos]`) so it lands as the "previous window" — otherwise the walked-to window gets buried under the pre-walk top and `arr[1]` shows the wrong window.
 
-## Alert Pane Landing
+## Notification Pane Landing
 
-`C-\`` (`~/.tmux/activity-walk.sh`) selects both the alerted window *and* the pane that raised the alert.
+`C-\`` (`~/.tmux/activity-walk.sh`) jumps to the pane holding the newest pending Claude Code notification, crossing window boundaries.
 
 - **tmux has no per-pane alert flag.** `window_bell_flag` / `window_activity_flag` are window-scoped, and the `alert-bell` hook's `#{pane_id}` resolves to the window's *active* pane, not the ringing one — verified, so that workaround doesn't work.
-- **The badge is the origin record.** `~/.claude/hooks/tmux-pane-badge.sh` sets the pane-scoped `@badge` option *and* writes the `\a` that raises the bell, so every bell traces back to a badged pane. The walker filters on it: `list-panes -f '#{m:🔔*,#{@badge}}'`, falling back to `✓*`, then leaving the pane alone if nothing is badged.
-- **`monitor-activity` is `off`**, so `window_activity_flag` never fires — bells are the only live alert source despite the walker still checking both.
+- **The badge is the queue.** `~/.claude/hooks/tmux-pane-badge.sh` sets the pane-scoped `@badge` *and* writes the `\a` raising the bell, so every notification traces back to a badged pane. It also stamps `@badge_at` (epoch ns) so the walker can pick the most recent. The walker ignores bell flags entirely.
+- **Ordering:** newest `🔔` wins; only if none are waiting does it fall back to newest `✓`. Straight newest-wins is wrong — the Stop hook fires `✓ done` every turn, so a finished pane would routinely outrank one blocked on input.
+- **Timestamps stay strings.** 19-digit nanosecond values exceed the precision of both `sort -n` and awk arithmetic; compare them lexically at fixed width (missing → `0000000000000000000`).
+- **Focusing a pane clears its badge** (`pane-focus-in` hook), so repeated taps drain the queue. `if -F '#{@badge}' 'set -pu @badge'` tests the format with no shell spawned on the frequent no-badge focus events.
+- **`pane-focus-in` works globally but is absent from `show-hooks -g`** — verify it by behavior, not by listing. It also needs `focus-events on` and an attached client; it never fires in a detached session, which makes detached test sessions useless for testing it.
+- **`monitor-activity` is `off`**, so `window_activity_flag` never fires.
 
 ## Exit Copy Mode on Type
 
