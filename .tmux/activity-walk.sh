@@ -27,10 +27,18 @@ sid=${1:-}
 # A pane badged before @badge_at existed sorts oldest via a zero sentinel. The
 # timestamp stays a string end to end — 19-digit nanoseconds exceed the precision
 # of both sort -n and awk arithmetic, so compare them lexically at fixed width.
+# The pane we are already sitting on. Excluded from the candidates below: it is
+# frequently the newest badge (Claude badges the pane you are watching), and
+# "landing" on it is a no-op that fires no pane-focus-in, so its badge never
+# clears and the walk deadlocks — every press re-picks it and nothing else in the
+# queue is reachable. Skipping it leaves the badge pending, and returning later
+# is a real focus change that clears it normally.
+cur=$(tmux display-message -p -t "$sid" '#{pane_id}' 2>/dev/null || true)
+
 newest() {
     tmux list-panes -s -t "$sid" -F '#{@badge_at}|#{window_id}|#{pane_id}' \
         -f "#{m:$1,#{@badge}}" 2>/dev/null \
-        | awk -F'|' '{ print ($1 == "" ? "0000000000000000000" : $1), $2, $3 }' \
+        | awk -F'|' -v cur="$cur" '$3 != cur { print ($1 == "" ? "0000000000000000000" : $1), $2, $3 }' \
         | sort -r \
         | head -1 \
         | awk '{ print $2, $3 }'
