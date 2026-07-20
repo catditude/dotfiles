@@ -44,8 +44,26 @@ newest() {
         | awk '{ print $2, $3 }'
 }
 
+# Fallback tier for REMOTE Claude: a notification fired inside a cloud-desktop
+# tmux sets @badge on a pane THERE, which never crosses ssh — only the bell byte
+# does, landing as this window's #{window_bell_flag}. So there is no @badge to
+# match; select the newest (by #{window_activity}) window holding an ssh pane
+# whose bell is set. Gated on an ssh pane so a stale LOCAL bell is never chased —
+# local notifications always have a real @badge and are caught by newest() above.
+# cur is a pane id; exclude by window here since the bell flag is window-scoped.
+newest_ssh_bell() {
+    curwin=$(tmux display-message -p -t "$sid" '#{window_id}' 2>/dev/null || true)
+    tmux list-panes -s -t "$sid" -F '#{window_activity}|#{window_id}|#{pane_id}' \
+        -f "#{&&:#{m:ssh,#{pane_current_command}},#{window_bell_flag}}" 2>/dev/null \
+        | awk -F'|' -v curwin="$curwin" '$2 != curwin { print $1, $2, $3 }' \
+        | sort -rn \
+        | head -1 \
+        | awk '{ print $2, $3 }'
+}
+
 read -r win pane <<<"$(newest '🔔*')"
 [[ -z "${pane:-}" ]] && read -r win pane <<<"$(newest '✓*')"
+[[ -z "${pane:-}" ]] && read -r win pane <<<"$(newest_ssh_bell)"
 [[ -z "${pane:-}" ]] && exit 0
 
 # Point the window at the target pane BEFORE switching to it. Reversed, the
